@@ -10,15 +10,15 @@ import java.math.RoundingMode;
 @Component
 public class GpaCalculatorServiceImpl implements GpaCalculatorService {
     @Override
-    public Gpa calculate(List<List<Result>> results){
+    public Gpa calculate(List<List<Result>> results) {
         List<Double> yearlyGpas = new ArrayList<>();
         Integer totalCredits = 0;
         Double totalGradePoints = 0.0;
 
-        for(List<Result> yearlyResults : results){
+        for (List<Result> yearlyResults : results) {
             Integer totalCreditsOfYear = 0;
             Double totalGradePointsofYear = 0.0;
-            for(Result result : yearlyResults){
+            for (Result result : yearlyResults) {
                 totalCreditsOfYear = totalCreditsOfYear + result.getNumberOfCredits();
                 Double gradePoint = result.getNumberOfCredits() * getGradeValue(result.getGrade());
                 totalGradePointsofYear = totalGradePointsofYear + gradePoint;
@@ -29,17 +29,18 @@ public class GpaCalculatorServiceImpl implements GpaCalculatorService {
             totalGradePoints = totalGradePoints + totalGradePointsofYear;
         }
 
-        Double cumulativeGpa = (new BigDecimal(totalGradePoints / totalCredits).setScale(2, RoundingMode.HALF_UP)).doubleValue();
+        Double cumulativeGpa = (new BigDecimal(totalGradePoints / totalCredits).setScale(2, RoundingMode.HALF_UP))
+                .doubleValue();
 
         Gpa gpa = Gpa.builder()
-        .yearlyGpa(yearlyGpas)
-        .cumulativeGpa(cumulativeGpa)
-        .build();
+                .yearlyGpa(yearlyGpas)
+                .cumulativeGpa(cumulativeGpa)
+                .build();
         return gpa;
-    } 
+    }
 
-    public Double getGradeValue(String grade){
-        switch(grade){
+    public Double getGradeValue(String grade) {
+        switch (grade) {
             case "A+":
                 return 4.0;
             case "A":
