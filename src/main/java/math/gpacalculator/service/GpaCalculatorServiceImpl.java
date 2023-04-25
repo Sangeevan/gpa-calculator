@@ -4,12 +4,14 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import math.gpacalculator.dto.Gpa;
 import math.gpacalculator.dto.Result;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Component
 public class GpaCalculatorServiceImpl implements GpaCalculatorService {
     @Override
     public Gpa calculate(List<List<Result>> results){
-        List<Double> yearlyGpa = new ArrayList<>();
+        List<Double> yearlyGpas = new ArrayList<>();
         Integer totalCredits = 0;
         Double totalGradePoints = 0.0;
 
@@ -21,15 +23,16 @@ public class GpaCalculatorServiceImpl implements GpaCalculatorService {
                 Double gradePoint = result.getNumberOfCredits() * getGradeValue(result.getGrade());
                 totalGradePointsofYear = totalGradePointsofYear + gradePoint;
             }
-            yearlyGpa.add(totalGradePointsofYear / totalCreditsOfYear);
+            Double yearlyGpa = totalGradePointsofYear / totalCreditsOfYear;
+            yearlyGpas.add((new BigDecimal(yearlyGpa).setScale(2, RoundingMode.HALF_UP)).doubleValue());
             totalCredits = totalCredits + totalCreditsOfYear;
             totalGradePoints = totalGradePoints + totalGradePointsofYear;
         }
 
-        Double cumulativeGpa = totalGradePoints / totalCredits;
+        Double cumulativeGpa = (new BigDecimal(totalGradePoints / totalCredits).setScale(2, RoundingMode.HALF_UP)).doubleValue();
 
         Gpa gpa = Gpa.builder()
-        .yearlyGpa(yearlyGpa)
+        .yearlyGpa(yearlyGpas)
         .cumulativeGpa(cumulativeGpa)
         .build();
         return gpa;
